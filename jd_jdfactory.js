@@ -6,8 +6,8 @@
  */
 /*
 东东工厂，不是京喜工厂
-目前不知免费产生的电量瓶颈是多少。
-故建议5小时运行一次
+免费产生的电量(10秒1个电量，500个电量满，5000秒到上限不生产，算起来是84分钟达到上限)
+故建议1小时运行一次
 开会员任务和去京东首页点击“数码电器任务目前未做
 不会每次运行脚本都投入电力
 只有当心仪的商品存在，并且收集起来的电量满足当前商品所需电力，才投入
@@ -44,7 +44,7 @@ if ($.isNode()) {
 } else {
   cookiesArr.push(...[$.getdata('CookieJD'), $.getdata('CookieJD2')]);
 }
-let wantProduct = `移动电源`;//心仪商品名称
+let wantProduct = ``;//心仪商品名称
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
 const inviteCodes = [`P04z54XCjVWnYaS5u2ak7ZCdan1Bdd2GGiWvC6_uERj`, 'P04z54XCjVWnYaS5m9cZ2ariXVJwHf0bgkG7Uo'];
 !(async () => {
@@ -122,7 +122,7 @@ async function algorithm() {
                 console.log(`\n已选商品：${name}`);
                 console.log(`当前已投入电量/所需电量：${useScore}/${totalScore}`);
                 console.log(`已选商品剩余量：${couponCount}`);
-                console.log(`当前蓄电池电量：${remainScore}`);
+                console.log(`当前总电量：${remainScore * 1 + useScore * 1}`);
                 console.log(`当前完成度：${((remainScore * 1 + useScore * 1)/(totalScore * 1)).toFixed(2) * 100}%\n`);
                 message += `京东账号${$.index} ${$.nickName}\n`;
                 message += `已选商品：${name}\n`;
@@ -436,6 +436,7 @@ function jdfactory_getProductList(flag) {
                   console.log(`${item.name.slice(-4)}         ${item.sellOut === 1 ? '已抢光':'可选'}      ${item.couponCount}`);
                   if (item.name.indexOf(wantProduct) > -1 && item.couponCount > 0 && item.sellOut === 0) {
                     await jdfactory_makeProduct(item.skuId);
+                    break
                   }
                 }
               }
